@@ -14,6 +14,8 @@ import cvprac.cvp_client
 import json
 import sys
 import argparse
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 version = '1.0'
 
@@ -30,10 +32,6 @@ def get_devices(client):
         devices.extend(_devices)
 
     return devices
-
-
-def get_cvp_info(client):
-    return client.api.get_cvp_info()
 
 
 def validate_and_compare_configlets(client, device_id, configlet_keys):
@@ -56,42 +54,58 @@ def update_add_reconcile(client, name, config, key, device_id):
     return data
 
 
-def cancel_all_pending_tasks(client):
+def cancel_pending_tasks(client):
     tasks = client.api.get_tasks_by_status('Pending')
     for task in tasks:
-        client.api.cancel_task(task['workOrderId'])
+        if 'auto-reconcile' in task['description']:
+            client.api.cancel_task(task['workOrderId'])
 
     return
 
 
 def reconcile(client, device):
     configlet_keys = []
-    configlet_names = []
+    reconcile_applied = False
 
+    try:
+        reconcile = client.api.get_configlet_by_name('RECONCILE_%s' % device['ipAddress'])
+    except:
+        reconcile = {'name': None}
+    
     device_id = device['systemMacAddress']
+    print 'Gathering configlets for: %s' % device['fqdn']
     configlets = client.api.get_configlets_by_device_id(device_id)
     for configlet in configlets:
-        configlet_keys.append(configlet['key'])
-        configlet_names.append(configlet['name'])
-    
+        if reconcile['name'] == configlet['name']:
+            print 'reconcile applied'
+            reconcile_applied = True
+            continue
+        else:
+            configlet_keys.append(configlet['key'])
+            print configlet['name'], configlet['key']
+
     result = validate_and_compare_configlets(client, device_id, configlet_keys)
+    
     if result['reconcile'] > 0:
+        print 'Begin reconciling process for: %s' % device['fqdn']
         configlet_name = result['reconciledConfig']['name']
         configlet_config = result['reconciledConfig']['config']
 
-        if result['reconciledConfig']['key'] != None:
-            reconcile_key = result['reconciledConfig']['key']
+        if result['reconciledConfig']['key'] == None:
+            reconcile_key = client.api.add_configlet(configlet_name, configlet_config)   
         else:
-            reconcile_key = client.api.add_configlet(configlet_name, configlet_config)
+            reconcile_key = result['reconciledConfig']['key']
         
+        print 'Updating reconcile configlet for: %s' % device['fqdn']
         reconcile_result = update_add_reconcile(client, configlet_name,
                                                 configlet_config, reconcile_key, device_id)
         
-        if configlet_name not in configlet_names:
+        if not reconcile_applied:
+            print 'Reconcile configlet not applied...applying to %s' % device['fqdn']
             apply_configlets = [ {'name': configlet_name, 'key': reconcile_key} ]
-            client.api.apply_configlets_to_device('auto-reconcile', device,
+            client.api.apply_configlets_to_device('auto-reconcile.py', device,
                                                    apply_configlets, True)
-        
+
     return
 
 
@@ -103,11 +117,6 @@ def main():
     args = parser.parse_args()
     args_list = [args.cvp, args.user, args.pwd]
     
-    #if None in args_list:
-    #  parser.print_help()
-    #  sys.exit(1)
-    #cvps = args.cvp.split(',')
-    
     user = 'arista'
     pwd = 'arista'
     cvps = ['192.168.0.5']
@@ -115,22 +124,32 @@ def main():
     cvp_client = cvprac.cvp_client.CvpClient()
     cvp_client.connect(cvps, user, pwd)
 
+    failed_devices = []
     devices = get_devices(cvp_client)
+    print 'Starting compliance checks'
     for device in devices:
         device_id = device['systemMacAddress']
         device_type = device['type']
         result = cvp_client.api.check_compliance(device_id, device_type)
-        
-        if device_id == '2c:c2:60:fd:3d:06':
-        #if result['complianceCode'] != '0000':
+
+        if result['complianceCode'] != '0000':
+            print 'Compliance check did not pass for: %s' % device['fqdn']
+            print 'Beginning reconcile...'
+            failed_devices.append(device)
             reconcile(cvp_client, device)
     
-    cancel_all_pending_tasks(cvp_client)
+    print 'Cancelling pending tasks'
+    cancel_pending_tasks(cvp_client)
     
-    for device in devices:
+    print 'Running compliance check for all failed devices again'
+    for device in failed_devices:
         device_id = device['systemMacAddress']
         device_type = device['type']
+        print 'Running compliance check again on: %s' % device['fqdn']
         cvp_client.api.check_compliance(device_id, device_type)
+
+    print ''
+    print 'Auto-reconcile Complete'
     
     return
 
