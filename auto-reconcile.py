@@ -82,7 +82,6 @@ def reconcile(client, device):
             continue
         else:
             configlet_keys.append(configlet['key'])
-            print configlet['name'], configlet['key']
 
     result = validate_and_compare_configlets(client, device_id, configlet_keys)
     
