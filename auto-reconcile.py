@@ -63,7 +63,7 @@ def update_add_reconcile(client, name, config, key, device_id):
     client.log.debug('update_add_reconcile: name: %s config: %s key: %s' % (name, config, key))
 
     body = {'name': name, 'config': config, 'key': key, 'reconciled': True}
-    data = client.post('/provisioning/updateReconcileConfiglet.do?netElementId=%s' % device_id,
+    data = client.post('/provisioning/v2/updateReconcileConfiglet.do?netElementId=%s' % device_id,
                         data=body, timeout=client.api.request_timeout)
 
     return data
@@ -121,8 +121,6 @@ def reconcile(client, device):
                                                    apply_configlets, True)
 
     return
-
-
 
 
 def main():
