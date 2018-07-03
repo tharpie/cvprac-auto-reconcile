@@ -4,7 +4,7 @@ a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudV
 1. Verify the following python libraries are installed
     1. cvprac
 
-2. Setup cfg file with username/password
+2. Setup cfg file with username/password on system where the script will be executed.
     1. sudo vim /etc/auto-reconcile.cfg
 
 ```
