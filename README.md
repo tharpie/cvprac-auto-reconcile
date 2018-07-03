@@ -15,6 +15,9 @@ a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudV
         username='arista'
         password='arista'
 
+        [cvp_instances]
+        nodes='node1,node2,node3'
+
 3. Setup crontab entry to run on system
         
         crontab -e

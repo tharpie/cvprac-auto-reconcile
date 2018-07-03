@@ -113,7 +113,7 @@ def main():
     parser.read(cfg_file)
     user = parser.get('authentication', 'username')
     pwd = parser.get('authentication', 'password')
-    cvp_nodes = parser.get('authentication', 'cvp_nodes').split(',')
+    cvp_nodes = parser.get('cvp_instances', 'nodes').split(',')
     
     cvp_client = cvprac.cvp_client.CvpClient()
     cvp_client.connect(cvp_nodes, user, pwd)
