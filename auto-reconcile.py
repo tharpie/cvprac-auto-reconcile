@@ -112,9 +112,9 @@ def reconcile(client, device):
 def main():
     parser = SafeConfigParser()
     parser.read(cfg_file)
-    user = parser.get('authentication', 'username')
-    pwd = parser.get('authentication', 'password')
-    cvp_nodes = parser.get('cvp_instances', 'nodes').split(',')
+    user = parser.get('authentication', 'username').replace('"','').replace("'")
+    pwd = parser.get('authentication', 'password').replace('"','').replace("'")
+    cvp_nodes = parser.get('cvp_instances', 'nodes').replace('"','').replace("'").split(',')
     
     cvp_client = cvprac.cvp_client.CvpClient()
     cvp_client.connect(cvp_nodes, user, pwd)
