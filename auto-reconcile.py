@@ -123,7 +123,8 @@ def reconcile(client, device):
 
     '''validate_and_compare_configlets generates a reconcile result and config'''
     result = validate_and_compare_configlets(client, device_id, configlet_keys)
-    
+    print result['reconcile']
+
     if result['reconcile'] > 0:
         print 'Begin reconciling process for: %s' % device['fqdn']
         configlet_name = result['reconciledConfig']['name']
