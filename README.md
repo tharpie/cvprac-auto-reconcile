@@ -21,5 +21,5 @@ nodes='node1,node2,node3'
 ```
 crontab -e
 
-x x x x x auto-reconcile.py
+5 * * * * python auto-reconcile.py
 ```
