@@ -23,6 +23,10 @@
 1. Verify the following python libraries are installed
     1. cvprac
 
+```
+arista@labaccess:~$ sudo pip install cvprac
+```
+
 2. Setup cfg file with username/password on system where the script will be executed.
     1. sudo vim /etc/auto-reconcile.cfg
 
@@ -44,5 +48,5 @@ crontab -e
 15 * * * * python auto-reconcile.py
 
 # Run from cmd line
-arista@system1:~/projects/cvprac-auto-reconcile$ python auto-reconcile.py
+arista@labaccess:~/projects/cvprac-auto-reconcile$ python auto-reconcile.py
 ```
