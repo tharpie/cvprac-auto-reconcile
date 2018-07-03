@@ -21,5 +21,6 @@ nodes='node1,node2,node3'
 ```
 crontab -e
 
-5 * * * * python auto-reconcile.py
+# Run every 15 minutes
+15 * * * * python auto-reconcile.py
 ```
