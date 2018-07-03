@@ -10,9 +10,9 @@ a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudV
 
     b. vim /etc/auto-reconcile.cfg
 
-            [authentication]
-            username='arista'
-            password='arista'
+        [authentication]
+        username='arista'
+        password='arista'
 
 3. Setup crontab entry to run on system
         
