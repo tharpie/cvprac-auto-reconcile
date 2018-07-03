@@ -34,11 +34,14 @@ password='arista'
 nodes='node1,node2,node3'
 ```
 
-3. Setup crontab entry to run on system
+3. Setup crontab entry to run on system or kick off manually
 
 ```
 crontab -e
 
 # Run every 15 minutes
 15 * * * * python auto-reconcile.py
+
+# Run from cmd line
+arista@system1:~/projects/cvprac-auto-reconcile$ python auto-reconcile.py
 ```
