@@ -52,7 +52,7 @@ def get_devices(client):
 def validate_and_compare_configlets(client, device_id, configlet_keys):
     client.log.debug('validate_and_compare_configlets: configlet_keys: %s ' % (configlet_keys))
 
-    body = {'netElementId': device_id, 'configIdList': configlet_keys, 'pageType': 'string'}
+    body = {'netElementId': device_id, 'configIdList': configlet_keys, 'pageType': 'viewConfig'}
     data = client.post('/provisioning/v2/validateAndCompareConfiglets.do', 
                         data=body, timeout=client.api.request_timeout)
 
@@ -92,7 +92,6 @@ def reconcile(client, device):
     configlets = client.api.get_configlets_by_device_id(device_id)
     for configlet in configlets:
         if reconcile['name'] == configlet['name']:
-            print 'reconcile applied'
             reconcile_applied = True
             continue
         else:
