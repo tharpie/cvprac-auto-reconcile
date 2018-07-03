@@ -7,7 +7,7 @@ a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudV
 
 2. Setup cfg file with username/password
 
-    a. vim /etc/auto-reconcile.cfg
+    a. sudo vim /etc/auto-reconcile.cfg
 
         [authentication]
         username='arista'
