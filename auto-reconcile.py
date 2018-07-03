@@ -186,7 +186,7 @@ def main():
         print 'Running compliance check again on: %s' % device['fqdn']
         cvp_client.api.check_compliance(device_id, device_type)
 
-    print '/nAuto-reconcile Complete'
+    print '\nAuto-reconcile Complete'
     
     return
 
