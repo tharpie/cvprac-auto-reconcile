@@ -13,12 +13,12 @@ https://github.com/aristanetworks/cvprac
 import cvprac.cvp_client
 import json
 import sys
-import argparse
+from ConfigParser import SafeConfigParser
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-version = '1.0'
-
+version = '1.1'
+cfg_file = '/etc/auto-reconcile.cfg'
 
 def get_devices(client):
     devices = []
@@ -109,19 +109,14 @@ def reconcile(client, device):
 
 
 def main():
-    parser = argparse.ArgumentParser(description='script used to auto-magically reconcile CVP managed EOS nodes')
-    parser.add_argument('--cvp', help='specify CVP node to run against. Use csv format for multiple nodes')
-    parser.add_argument('--user', help='username for CVP')
-    parser.add_argument('--pwd', help='password for CVP')
-    args = parser.parse_args()
-    args_list = [args.cvp, args.user, args.pwd]
-    
-    user = 'arista'
-    pwd = 'arista'
-    cvps = ['192.168.0.5']
+    parser = SafeConfigParser()
+    parser.read(cfg_file)
+    user = parser.get('authentication', 'username')
+    pwd = parser.get('authentication', 'password')
+    cvp_nodes = parser.get('authentication', 'cvp_nodes').split(',')
     
     cvp_client = cvprac.cvp_client.CvpClient()
-    cvp_client.connect(cvps, user, pwd)
+    cvp_client.connect(cvp_nodes, user, pwd)
 
     failed_devices = []
     devices = get_devices(cvp_client)
