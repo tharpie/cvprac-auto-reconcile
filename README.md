@@ -2,6 +2,7 @@
 a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudVision cluster
 
 1. Verify the following python libraries are installed
+
     a. cvprac
 
 2. Setup cfg file with username/password
