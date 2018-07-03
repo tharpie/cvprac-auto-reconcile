@@ -159,6 +159,8 @@ def main():
     except CvpLoginError as e:
         print 'CvpLoginError has occured...Error Message:'
         print e.msg
+        print '\nVerify .cfg for correct authentication'
+        print 'Verify connectivity to cvp_nodes in .cfg'
         sys.exit(1)
 
     failed_devices = []
