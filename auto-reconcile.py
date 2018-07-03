@@ -21,6 +21,20 @@ version = '1.1'
 cfg_file = '/etc/auto-reconcile.cfg'
 
 
+def get_credentials(config_file):
+    def remove_quotes(item):
+        item = item.replace("'",'')
+        item = item.replace('"','')
+        return item
+
+    parser = SafeConfigParser()
+    parser.read(config_file)
+    user = remove_quotes( parser.get('authentication', 'username') )
+    pwd = remove_quotes( parser.get('authentication', 'password') )
+    cvp_nodes = remove_quotes( parser.get('cvp_instances', 'nodes') ).split(',')
+    return (user, pwd, cvp_nodes)
+
+
 def get_devices(client):
     devices = []
     containers = client.api.get_containers()
@@ -109,13 +123,10 @@ def reconcile(client, device):
     return
 
 
+
+
 def main():
-    parser = SafeConfigParser()
-    parser.read(cfg_file)
-    user = parser.get('authentication', 'username').replace('"','').replace("'",'')
-    pwd = parser.get('authentication', 'password').replace('"','').replace("'",'')
-    cvp_nodes = parser.get('cvp_instances', 'nodes').replace('"','').replace("'",'').split(',')
-    
+    user, pwd, cvp_nodes = get_credentials(cfg_file)
     cvp_client = cvprac.cvp_client.CvpClient()
     cvp_client.connect(cvp_nodes, user, pwd)
 
