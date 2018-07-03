@@ -1,7 +1,8 @@
 # cvprac-auto-reconcile
 
 ## What is it?
-a script using aristanetworks cvprac library to auto-reconcile nodes on a CloudVision cluster
+1. A script using aristanetworks cvprac library to auto-reconcile nodes on a CloudVision cluster
+2. A script that can be executed from anywhere if requirements / setup are complete
 
 ## Why use this?
 1. If you use other Open Source Tools like Ansible to manage your configurations, but it's important to have CloudVision Portal up-to-date.
